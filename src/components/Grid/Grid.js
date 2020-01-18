@@ -33,11 +33,7 @@ class Grid extends React.Component {
 
   // initialize a 2D array of node objects
   componentDidMount() {
-    const grid = getClearGrid();
-
-    this.setState({
-      grid
-    });
+    this.getClearGrid();
   }
 
   handleMouseDown = (row, col) => {
@@ -129,6 +125,34 @@ class Grid extends React.Component {
     }
   };
 
+  // create a brand new grid, erasing everything
+  getClearGrid = () => {
+    const grid = [];
+
+    this.removePathHighlighting();
+
+    for (let col = 0; col < COL; col++) {
+      const currentCol = [];
+      for (let row = 0; row < ROW; row++) {
+        const currentNode = {
+          col,
+          row,
+          nodeType: determineNodeType(row, col),
+          distance: Infinity,
+          visited: false,
+          previousNode: null,
+          FCost: Infinity
+        };
+        currentCol.push(currentNode);
+      }
+      grid.push(currentCol);
+    }
+
+    this.setState({
+      grid
+    });
+  };
+
   // clear grid except the walls, start, and finish nodes
   removePathHighlighting = () => {
     const grid = this.state.grid;
@@ -149,8 +173,6 @@ class Grid extends React.Component {
   };
 
   render() {
-    const { grid } = this.state;
-
     return (
       <div onMouseLeave={() => this.handleMouseUp()}>
         <div className="grid">{this.mapNodes()}</div>
@@ -192,28 +214,6 @@ const getNewGridWithWallToggled = (state, row, col) => {
   };
   newGrid[col][row] = newNode;
   return newGrid;
-};
-
-// create a brand new grid, erasing everything
-const getClearGrid = () => {
-  const grid = [];
-  for (let col = 0; col < COL; col++) {
-    const currentCol = [];
-    for (let row = 0; row < ROW; row++) {
-      const currentNode = {
-        col,
-        row,
-        nodeType: determineNodeType(row, col),
-        distance: Infinity,
-        visited: false,
-        previousNode: null
-      };
-      currentCol.push(currentNode);
-    }
-    grid.push(currentCol);
-  }
-
-  return grid;
 };
 
 export default Grid;

@@ -1,4 +1,5 @@
 import { NodeType } from '../components/Grid/Node/Node';
+import { resetNodesAndGetIndividualNodesFromGrid } from './index';
 
 export function dijkstra(grid, startNode, endNode) {
   const visitedNodes = [];
@@ -50,29 +51,4 @@ const getUnvisitedNeighbors = (node, grid) => {
 
 const sortUnvisitedNodesByDistance = unvisitedNodes => {
   unvisitedNodes.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance);
-};
-
-export function dijkstraShortestPath(endNode) {
-  const shortestPathNodes = [];
-  let currentNode = endNode;
-  while (currentNode !== null) {
-    shortestPathNodes.unshift(currentNode);
-    currentNode = currentNode.previousNode;
-  }
-
-  return shortestPathNodes;
-}
-
-const resetNodesAndGetIndividualNodesFromGrid = grid => {
-  const newGrid = [];
-  for (const col of grid) {
-    for (const node of col) {
-      node.distance = Infinity;
-      node.visited = false;
-      node.previousNode = null;
-      newGrid.push(node);
-    }
-  }
-
-  return newGrid;
 };

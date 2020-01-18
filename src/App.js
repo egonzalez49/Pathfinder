@@ -13,27 +13,38 @@ class App extends React.Component {
     this.gridRef = React.createRef();
   }
 
-  visualizeAlgo = algo => {
-    const { grid } = this.gridRef.current.state;
-    this.gridRef.current.removePathHighlighting();
-    this.gridRef.current.setAlgorithmRunning(true);
-    if (algo === AlgoType.Dijkstra) {
-      this.visualizeDijkstra(grid);
-    }
+  clearBoard = () => {
+    this.gridRef.current.getClearGrid();
   };
 
-  visualizeDijkstra = grid => {
+  visualizeAlgo = algo => {
+    const { grid } = this.gridRef.current.state;
     const startNode = grid[START_NODE_COORDS.col][START_NODE_COORDS.row];
     const finishNode = grid[FINISH_NODE_COORDS.col][FINISH_NODE_COORDS.row];
+    this.gridRef.current.removePathHighlighting();
+    this.gridRef.current.setAlgorithmRunning(true);
+    let visitedNodes = null;
+    if (algo === AlgoType.Dijkstra) {
+      //this.visualizeDijkstra(grid, startNode, finishNode);
+      visitedNodes = Algorithms.dijkstra(grid, startNode, finishNode);
+    } else {
+      visitedNodes = Algorithms.astar(grid, startNode, finishNode);
+    }
+
+    const shortestPathNodes = Algorithms.getShortestPath(finishNode);
+    this.gridRef.current.animateAlgorithm(visitedNodes, shortestPathNodes);
+  };
+
+  visualizeDijkstra = (grid, startNode, finishNode) => {
     const visitedNodes = Algorithms.dijkstra(grid, startNode, finishNode);
-    const shortestPathNodes = Algorithms.dijkstraShortestPath(finishNode);
+    const shortestPathNodes = Algorithms.getShortestPath(finishNode);
     this.gridRef.current.animateAlgorithm(visitedNodes, shortestPathNodes);
   };
 
   render() {
     return (
       <div className="container">
-        <Controls visualize={this.visualizeAlgo} />
+        <Controls visualize={this.visualizeAlgo} clearBoard={this.clearBoard} />
         <Grid ref={this.gridRef} />
       </div>
     );

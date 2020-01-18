@@ -19,6 +19,7 @@ class Node extends React.Component {
       onMouseEnter,
       onMouseUp
     } = this.props;
+
     return (
       <div
         id={`node-${col}-${row}`}

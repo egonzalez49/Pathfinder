@@ -3,7 +3,8 @@ import React from 'react';
 import './controls.scss';
 
 export const AlgoType = Object.freeze({
-  Dijkstra: 'Dijkstra'
+  Dijkstra: 'Dijkstra',
+  AStar: 'A*'
 });
 
 class Controls extends React.Component {
@@ -11,7 +12,7 @@ class Controls extends React.Component {
     super(props);
 
     this.state = {
-      algorithm: AlgoType.Dijkstra
+      algorithm: AlgoType.AStar
     };
   }
 
@@ -25,6 +26,9 @@ class Controls extends React.Component {
           onClick={() => this.props.visualize(algorithm)}
         >
           Visualize {`${algorithm}`}
+        </button>
+        <button className="btn" onClick={() => this.props.clearBoard()}>
+          Clear Board
         </button>
       </div>
     );
