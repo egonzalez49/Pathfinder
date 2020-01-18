@@ -1,0 +1,105 @@
+$primary-color: #18324d;
+$visited-primary-gradient-color: #667be6;
+$visited-secondary-gradient-color: #774ca5;
+$primary-gradient-color: #ff7711;
+$secondary-gradient-color: #ed5774;
+
+.node {
+  border: 1px solid #ecf1ff;
+  min-width: 35px;
+  min-height: 35px;
+}
+
+.start {
+  background-color: green;
+}
+
+.finish {
+  background-color: red;
+}
+
+.wall {
+  background-color: $primary-color;
+  animation-name: wallAnimation;
+  animation-duration: 1.5s;
+  animation-timing-function: ease-out;
+  animation-delay: 0;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+}
+
+@keyframes wallAnimation {
+  0% {
+    transform: scale(0.6);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.visited {
+  animation-name: visitedAnimation;
+  animation-duration: 1.5s;
+  animation-timing-function: ease-out;
+  animation-delay: 0;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+}
+
+@keyframes visitedAnimation {
+  0% {
+    transform: scale(0.25);
+    background-color: rgba($primary-color, 0.75);
+    //background-color: rgba($primary-gradient-color, 0.75);
+    border-radius: 100%;
+  }
+
+  50% {
+    background-color: rgba($primary-gradient-color, 0.75);
+  }
+
+  75% {
+    //background-color: rgba(0, 217, 159, 0.75);
+  }
+
+  100% {
+    transform: scale(1);
+    background-color: rgba($secondary-gradient-color, 0.75);
+  }
+}
+
+.shortest-path {
+  animation-name: shortestPath;
+  animation-duration: 1.5s;
+  animation-timing-function: ease-out;
+  animation-delay: 0;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+}
+
+@keyframes shortestPath {
+  0% {
+    transform: scale(0.6);
+    background-color: $visited-secondary-gradient-color;
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+    background-color: $visited-primary-gradient-color;
+  }
+}
