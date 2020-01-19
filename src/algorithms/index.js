@@ -8,6 +8,7 @@ export function resetNodesAndGetIndividualNodesFromGrid(grid) {
       node.distance = Infinity;
       node.visited = false;
       node.previousNode = null;
+      node.HCost = Infinity;
       node.FCost = Infinity;
       newGrid.push(node);
     }

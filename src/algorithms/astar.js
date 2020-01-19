@@ -6,79 +6,66 @@ export function astar(grid, startNode, endNode) {
   const openNodes = [];
   const closedNodes = [];
   openNodes.push(startNode);
+  startNode.distance = 0;
   startNode.FCost = 0;
-
-  // let counter = 0;
 
   while (openNodes.length !== 0) {
     sortOpenNodesByFCost(openNodes);
     // find the lowest FCost node
-    const currentNode = openNodes.shift();
-
-    // console.log('CURRENT NODE---------------');
-    // console.log(currentNode);
-    // console.log('=======================');
-
-    // console.log('OPEN NODES: ');
-    // for (const node of openNodes) console.log(node);
+    const currentNode = findClosestNode(openNodes); // openNodes.shift();
 
     closedNodes.push(currentNode);
     currentNode.visited = true;
     if (currentNode.FCost === Infinity) return closedNodes;
     if (currentNode === endNode) return closedNodes;
 
-    recalculateFCostOfNeighbors(
-      currentNode,
-      openNodes,
-      startNode,
-      endNode,
-      grid
-    );
-
-    // counter++;
-    // if (counter > 3) return closedNodes;
+    recalculateFCostOfNeighbors(currentNode, openNodes, endNode, grid);
   }
 }
+
+const findClosestNode = openNodes => {
+  let currentNode = openNodes[0];
+  const lowestFCost = currentNode.FCost;
+  let lowestIndex = 0;
+  let index = 0;
+  for (let node of openNodes) {
+    if (node.FCost === lowestFCost) {
+      if (node.HCost < currentNode.HCost) {
+        lowestIndex = index;
+        currentNode = node;
+      }
+      index++;
+    } else {
+      break;
+    }
+  }
+
+  openNodes.splice(lowestIndex, 1);
+  console.log(currentNode);
+  return currentNode;
+};
 
 const sortOpenNodesByFCost = openNodes => {
   openNodes.sort((nodeA, nodeB) => nodeA.FCost - nodeB.FCost);
 };
 
-const recalculateFCostOfNeighbors = (
-  node,
-  openNodes,
-  startNode,
-  endNode,
-  grid
-) => {
+const recalculateFCostOfNeighbors = (node, openNodes, endNode, grid) => {
   const neighbors = getNeighbors(node, grid);
-
-  // let bool = node.col === 12;
-  // if (bool) {
-  //   for (let n of neighbors)
-  //     console.log(
-  //       '%c' + n.row + ' ' + n.col,
-  //       'background: grey; color: white; display: block;'
-  //     );
-  // }
 
   for (let i = neighbors.length - 1; i >= 0; i--) {
     const neighbor = neighbors[i];
-    // if (bool)
-    //   console.log('%c' + i, 'background: green; color: white; display: block;');
-    // if (bool) console.log(neighbor);
+
     if (neighbor.nodeType === NodeType.Start) continue;
 
     if (!neighbor.visited && neighbor.nodeType !== NodeType.Wall) {
       // if not previously visited, add it to the array of open nodes
       if (neighbor.FCost === Infinity) openNodes.push(neighbor);
-      const newFCost = calculateFCost(neighbor, startNode, endNode);
+
+      const newFCost = calculateFCost(node, neighbor, endNode);
       if (newFCost < neighbor.FCost) {
         neighbor.FCost = newFCost;
         neighbor.previousNode = node;
       }
-
-      // findNodeAndChangeOrAdd(neighbor, openNodes);
     } else {
       // remove neighbor from list (it is already visited)
       neighbors.splice(i, 1);
@@ -86,27 +73,20 @@ const recalculateFCostOfNeighbors = (
   }
 };
 
-// const findNodeAndChangeOrAdd = (node, openNodes) => {
-//   const { row, col, FCost, previousNode } = node;
-//   for (let openNode of openNodes) {
-//     if (openNode.row === row && openNode.col === col) {
-//       openNode.FCost = FCost;
-//       openNode.previousNode = previousNode;
-//       return;
-//     }
-//   }
-
-//   openNodes.push(node);
-// };
-
-const calculateFCost = (node, startNode, endNode) => {
-  const GCost = manhattanDistance(node, startNode);
-  const HCost = manhattanDistance(node, endNode);
+// in this case, the neighbor is the previous node
+const calculateFCost = (neighbor, node, endNode) => {
+  let newDistance = neighbor.distance + 1;
+  // only update node's distance if it is less than it's current distance from start
+  node.distance = newDistance < node.distance ? newDistance : node.distance;
+  const GCost = node.distance; // manhattanDistance(node, startNode);
+  node.HCost = manhattanDistance(node, endNode);
+  const HCost = node.HCost;
   return GCost + HCost;
 };
 
 // grab a node's neighbors from all directions (diagonals too)
 const getNeighbors = (node, grid) => {
+  console.log(grid);
   const neighbors = [];
   const { col, row } = node;
 
@@ -130,10 +110,6 @@ const getNeighbors = (node, grid) => {
   // grab the neighbor directly below if available
   if (row < grid[0].length - 1) neighbors.push(grid[col][row + 1]);
 
-  // if (col === 12) {
-  //   console.log('THIS IS THE 12TH NODE -----------------');
-  //   for (let node of neighbors) console.log(node);
-  // }
   return neighbors;
 };
 

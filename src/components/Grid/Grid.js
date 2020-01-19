@@ -138,9 +138,10 @@ class Grid extends React.Component {
           col,
           row,
           nodeType: determineNodeType(row, col),
-          distance: Infinity,
+          distance: Infinity, // also known as GCost for AStar
           visited: false,
           previousNode: null,
+          HCost: Infinity,
           FCost: Infinity
         };
         currentCol.push(currentNode);
