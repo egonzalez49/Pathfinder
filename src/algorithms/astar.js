@@ -41,7 +41,6 @@ const findClosestNode = openNodes => {
   }
 
   openNodes.splice(lowestIndex, 1);
-  console.log(currentNode);
   return currentNode;
 };
 
@@ -86,7 +85,6 @@ const calculateFCost = (neighbor, node, endNode) => {
 
 // grab a node's neighbors from all directions (diagonals too)
 const getNeighbors = (node, grid) => {
-  console.log(grid);
   const neighbors = [];
   const { col, row } = node;
 

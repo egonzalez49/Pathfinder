@@ -1,8 +1,6 @@
-$primary-color: #18324d;
+@import '../../../style.scss';
 $visited-primary-gradient-color: #667be6;
 $visited-secondary-gradient-color: #774ca5;
-$primary-gradient-color: #ff7711;
-$secondary-gradient-color: #ed5774;
 
 .node {
   border: 1px solid #ecf1ff;

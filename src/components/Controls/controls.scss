@@ -1,11 +1,13 @@
+@import '../../style.scss';
+
 .controls {
   margin: 5rem 0;
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-around;
 }
 
-.main-btn {
+.btn {
   cursor: pointer;
   display: inline-block;
   margin-right: -2px;
@@ -16,10 +18,44 @@
   font-weight: bold;
   color: #fff;
   border: none;
-  border-radius: 25px;
+  background: $primary-color;
+}
+
+.main-btn {
   background: linear-gradient(
     90deg,
     rgba(255, 121, 16, 1) 0%,
     rgba(255, 81, 124, 1) 100%
   );
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: $light-background-color;
+  min-width: 0;
+  width: 100%;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.dropdown-content h2 {
+  cursor: pointer;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content h2:hover {
+  background-color: $secondary-color;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
 }
