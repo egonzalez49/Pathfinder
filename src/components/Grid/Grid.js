@@ -27,7 +27,8 @@ class Grid extends React.Component {
         col: -1
       },
       mouseIsPressed: false,
-      algoIsRunning: false
+      algoIsRunning: false,
+      movingEndPoints: false
     };
   }
 
@@ -40,21 +41,39 @@ class Grid extends React.Component {
     // prevent user from drawing while algo is running
     if (this.state.algoIsRunning) return;
 
-    const newGrid = getNewGridWithWallToggled(this.state, row, col);
+    let newGrid = null;
+    let movingEndPoints = false;
+    if (
+      (row === START_NODE_COORDS.row && col === START_NODE_COORDS.col) ||
+      (row === FINISH_NODE_COORDS.row && col === FINISH_NODE_COORDS.col)
+    ) {
+      newGrid = this.state.grid;
+      movingEndPoints = true;
+    } else {
+      newGrid = getNewGridWithWallToggled(this.state, row, col);
+    }
+
     this.setState({
       grid: newGrid,
       previousMouseCoords: {
         row,
         col
       },
-      mouseIsPressed: true
+      mouseIsPressed: true,
+      movingEndPoints
     });
   };
 
   handleMouseEnter = (row, col) => {
     if (!this.state.mouseIsPressed) return;
 
-    const newGrid = getNewGridWithWallToggled(this.state, row, col);
+    let newGrid = null;
+    if (this.state.movingEndPoints) {
+      newGrid = changePositionOfEndPoint(this.state, row, col);
+    } else {
+      newGrid = getNewGridWithWallToggled(this.state, row, col);
+    }
+
     this.setState({
       grid: newGrid,
       previousMouseCoords: {
@@ -66,7 +85,8 @@ class Grid extends React.Component {
 
   handleMouseUp = () => {
     this.setState({
-      mouseIsPressed: false
+      mouseIsPressed: false,
+      movingEndPoints: false
     });
   };
 
@@ -127,6 +147,8 @@ class Grid extends React.Component {
 
   // create a brand new grid, erasing everything
   getClearGrid = () => {
+    if (this.state.algoIsRunning) return;
+
     const grid = [];
 
     this.removePathHighlighting();
@@ -192,7 +214,7 @@ const determineNodeType = (row, col) => {
   }
 };
 
-// create a wall node at the specified row-col
+// create a wall or delete a wall node at the specified row-col
 const getNewGridWithWallToggled = (state, row, col) => {
   // prevent current node from quickly changing between wall and regular node
   if (
@@ -206,14 +228,56 @@ const getNewGridWithWallToggled = (state, row, col) => {
   const node = newGrid[col][row];
 
   // don't override the start and finish nodes
-  if (node.nodeType === NodeType.Finish || node.nodeType === NodeType.Start)
+  if (node.nodeType === NodeType.Finish || node.nodeType === NodeType.Start) {
     return newGrid;
+  }
 
   const newNode = {
     ...node,
     nodeType: node.nodeType === NodeType.Wall ? NodeType.Regular : NodeType.Wall
   };
   newGrid[col][row] = newNode;
+  return newGrid;
+};
+
+// change one of the endpoints
+const changePositionOfEndPoint = (state, row, col) => {
+  const grid = state.grid;
+  const newGrid = grid.slice();
+  const node = newGrid[col][row];
+
+  // change the previous node back to a regular node
+  const oldNode =
+    newGrid[state.previousMouseCoords.col][state.previousMouseCoords.row];
+  oldNode.nodeType = NodeType.Regular;
+  newGrid[state.previousMouseCoords.col][
+    state.previousMouseCoords.row
+  ] = oldNode;
+
+  let nodeType = null;
+  // console.log('ROW: ' + row + ' | COL: ' + col);
+  if (
+    oldNode.row === START_NODE_COORDS.row &&
+    oldNode.col === START_NODE_COORDS.col
+  ) {
+    nodeType = NodeType.Start;
+    START_NODE_COORDS.row = row;
+    START_NODE_COORDS.col = col;
+  } else if (
+    oldNode.row === FINISH_NODE_COORDS.row &&
+    oldNode.col === FINISH_NODE_COORDS.col
+  ) {
+    nodeType = NodeType.Finish;
+    FINISH_NODE_COORDS.row = row;
+    FINISH_NODE_COORDS.col = col;
+  }
+
+  const newNode = {
+    ...node,
+    nodeType
+  };
+  newGrid[col][row] = newNode;
+
   return newGrid;
 };
 
