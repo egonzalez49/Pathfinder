@@ -7,4 +7,8 @@ _Click and drag_ the mouse to create and remove walls preventing the pathfinding
 ## Algorithms
 
 - Dijkstra's
+<<<<<<< HEAD
 - A\*
+=======
+- A*
+>>>>>>> a5a8742b1d85670f8dd265af36bef525b866adc6
